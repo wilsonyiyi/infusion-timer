@@ -27,6 +27,7 @@ export function ActiveInfusionTimer() {
   >(null);
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
   const [showSafetyAlert, setShowSafetyAlert] = useState(false);
+  const [safetyAlertDismissed, setSafetyAlertDismissed] = useState(false);
 
   useEffect(() => {
     if (!isRunning || isPaused || !startTime) return;
@@ -41,15 +42,25 @@ export function ActiveInfusionTimer() {
       const progress = Math.min(100, (elapsedMinutes / estimatedMinutes) * 100);
       setLiquidLevel(100 - progress);
 
+      const previousWarningLevel = warningLevel;
       if (remaining <= 5 && remaining > 0) {
         setWarningLevel("high");
-        setShowSafetyAlert(true);
+        // Only show alert if entering high level or previously dismissed
+        if (previousWarningLevel !== "high" || safetyAlertDismissed) {
+          setShowSafetyAlert(true);
+          setSafetyAlertDismissed(false);
+        }
       } else if (remaining <= 10 && remaining > 5) {
         setWarningLevel("medium");
-        setShowSafetyAlert(true);
+        // Only show alert if entering medium level from no warning or previously dismissed
+        if ((previousWarningLevel !== "medium" && previousWarningLevel !== "high") || safetyAlertDismissed) {
+          setShowSafetyAlert(true);
+          setSafetyAlertDismissed(false);
+        }
       } else {
         setWarningLevel(null);
         setShowSafetyAlert(false);
+        setSafetyAlertDismissed(false);
       }
 
       if (remaining <= 0 && isRunning && !isCompleted) {
@@ -98,9 +109,9 @@ export function ActiveInfusionTimer() {
 
   const warningMessage = () => {
     if (warningLevel === "high") {
-      return "⚠️ 建议提前通知护士";
+      return "建议提前通知护士";
     } else if (warningLevel === "medium") {
-      return "⚠️ 接近结束，请留意回血";
+      return "接近结束，请留意回血";
     }
     return null;
   };
@@ -127,28 +138,10 @@ export function ActiveInfusionTimer() {
       <div class="min-h-screen flex flex-col bg-medical-bg text-slate-900 font-display">
       {isCompleted ? (
         <>
-          <div class="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 bg-medical-bg/80 backdrop-blur-sm">
-            <div class="flex w-12 shrink-0 items-center justify-start">
-              <button onClick={stopInfusion} class="text-slate-600">
-                <svg
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-            </div>
+          <div class="flex items-center p-4 pb-2 justify-center sticky top-0 z-10 bg-medical-bg/80 backdrop-blur-sm">
             <h2 class="text-slate-900 text-lg font-bold leading-tight flex-1 text-center">
               输液完成
             </h2>
-            <div class="flex w-12 items-center justify-end"></div>
           </div>
 
           <div class="flex flex-col items-center px-4 py-8">
@@ -288,6 +281,19 @@ export function ActiveInfusionTimer() {
                 opacity: 0.8;
               }
             }
+            .animate-pulse-fast {
+              animation: pulse-fast 0.8s ease-in-out infinite;
+            }
+            @keyframes pulse-fast {
+              0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+              }
+              50% {
+                transform: scale(1.02);
+                opacity: 0.9;
+              }
+            }
           `}</style>
         </>
       ) : (
@@ -409,18 +415,17 @@ export function ActiveInfusionTimer() {
             >
               删除本次记录
             </button>
-            <div class="w-32 h-1 bg-slate-200 rounded-full mt-2"></div>
           </div>
 
           {/* Centered Floating Safety Alert */}
           {showSafetyAlert && (
             <div class="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
-              <div class="bg-white rounded-2xl border border-primary/20 shadow-lg p-4 max-w-sm mx-4 animate-pulse-slow pointer-events-auto">
-                <div class="flex items-center justify-between gap-3">
+              <div class="bg-white rounded-2xl border-2 border-red-200 shadow-2xl p-4 max-w-md mx-4 animate-pulse-fast pointer-events-auto transform animate-bounce-in">
+                <div class="flex items-center justify-between gap-2">
                   <div class="flex items-center gap-3 flex-1 min-w-0">
-                    <div class="bg-primary/10 p-2 rounded-lg animate-pulse flex-shrink-0">
+                    <div class="bg-red-100 p-3 rounded-full animate-pulse flex-shrink-0">
                       <svg
-                        class="w-5 h-5 text-primary"
+                        class="w-6 h-6 text-red-600 animate-pulse"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -428,20 +433,12 @@ export function ActiveInfusionTimer() {
                       </svg>
                     </div>
                     <div class="flex-1 min-w-0">
-                      <p class="text-slate-900 text-sm font-bold">安全提醒</p>
-                      <p class="text-slate-600 text-xs leading-relaxed truncate">
+                      <span class="text-red-600 text-sm font-bold">输液即将结束</span>
+                      <p class="text-slate-700 text-sm leading-tight truncate font-medium">
                         {warningMessage()}
                       </p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => setShowSafetyAlert(false)}
-                    class="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0"
-                  >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
                 </div>
               </div>
             </div>
