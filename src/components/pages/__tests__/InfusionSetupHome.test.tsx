@@ -7,10 +7,10 @@ vi.mock('../../../store/useStore')
 
 describe('InfusionSetupHome - Volume Selection', () => {
   const mockSetVolumePreset = vi.fn()
-  const mockSetCustomVolume = vi.fn()
   const mockSetPage = vi.fn()
   const mockSetSpeedLevel = vi.fn()
   const mockStartInfusion = vi.fn()
+  const mockSetState = vi.fn()
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -20,7 +20,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
       speedLevel: 'medium',
       setPage: mockSetPage,
       setVolumePreset: mockSetVolumePreset,
-      setCustomVolume: mockSetCustomVolume,
       setSpeedLevel: mockSetSpeedLevel,
       startInfusion: mockStartInfusion,
       volume: 200,
@@ -46,6 +45,8 @@ describe('InfusionSetupHome - Volume Selection', () => {
       resetTapCount: vi.fn(),
       calculateEstimatedMinutes: vi.fn(),
     })
+
+    vi.mocked(useStore).setState = mockSetState
   })
 
   it('renders volume selection options', () => {
@@ -63,7 +64,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
       speedLevel: 'medium',
       setPage: mockSetPage,
       setVolumePreset: mockSetVolumePreset,
-      setCustomVolume: mockSetCustomVolume,
       setSpeedLevel: mockSetSpeedLevel,
       startInfusion: mockStartInfusion,
       volume: 100,
@@ -107,7 +107,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
     fireEvent.click(screen.getByText('100ml'))
 
     expect(mockSetVolumePreset).toHaveBeenCalledWith('100')
-    expect(mockSetCustomVolume).toHaveBeenCalledWith(100)
   })
 
   it('updates volumePreset when clicking 200ml option', () => {
@@ -117,7 +116,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
       speedLevel: 'medium',
       setPage: mockSetPage,
       setVolumePreset: mockSetVolumePreset,
-      setCustomVolume: mockSetCustomVolume,
       setSpeedLevel: mockSetSpeedLevel,
       startInfusion: mockStartInfusion,
       volume: 100,
@@ -149,7 +147,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
     fireEvent.click(screen.getByText('200ml'))
 
     expect(mockSetVolumePreset).toHaveBeenCalledWith('200')
-    expect(mockSetCustomVolume).toHaveBeenCalledWith(200)
   })
 
   it('updates volumePreset to custom when clicking custom option', () => {
@@ -158,7 +155,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
     fireEvent.click(screen.getByText('自定义'))
 
     expect(mockSetVolumePreset).toHaveBeenCalledWith('custom')
-    expect(mockSetCustomVolume).not.toHaveBeenCalled()
   })
 
   it('shows custom volume input when custom preset is selected', () => {
@@ -168,7 +164,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
       speedLevel: 'medium',
       setPage: mockSetPage,
       setVolumePreset: mockSetVolumePreset,
-      setCustomVolume: mockSetCustomVolume,
       setSpeedLevel: mockSetSpeedLevel,
       startInfusion: mockStartInfusion,
       volume: 150,
@@ -216,7 +211,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
       speedLevel: 'medium',
       setPage: mockSetPage,
       setVolumePreset: mockSetVolumePreset,
-      setCustomVolume: mockSetCustomVolume,
       setSpeedLevel: mockSetSpeedLevel,
       startInfusion: mockStartInfusion,
       volume: 150,
@@ -248,7 +242,11 @@ describe('InfusionSetupHome - Volume Selection', () => {
     const customInput = screen.getByPlaceholderText('输入毫升数') as HTMLInputElement
     fireEvent.input(customInput, { target: { value: '300' } })
 
-    expect(mockSetCustomVolume).toHaveBeenCalledWith(300)
+    expect(mockSetState).toHaveBeenCalledWith({
+      customVolume: 300,
+      volumePreset: 'custom',
+      volume: 300
+    })
   })
 
   it('switches volume presets correctly', () => {
@@ -263,7 +261,6 @@ describe('InfusionSetupHome - Volume Selection', () => {
         currentPreset = preset
         mockSetVolumePreset(preset)
       },
-      setCustomVolume: mockSetCustomVolume,
       setSpeedLevel: mockSetSpeedLevel,
       startInfusion: mockStartInfusion,
       volume: 100,
@@ -295,6 +292,5 @@ describe('InfusionSetupHome - Volume Selection', () => {
     fireEvent.click(screen.getByText('200ml'))
 
     expect(mockSetVolumePreset).toHaveBeenCalledWith('200')
-    expect(mockSetCustomVolume).toHaveBeenCalledWith(200)
   })
 })

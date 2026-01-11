@@ -1,13 +1,14 @@
 import { useStore } from '../../store/useStore'
 
 export function InfusionSetupHome() {
-  const { setPage, setVolumePreset, setCustomVolume, setSpeedLevel, startInfusion, volumePreset, customVolume, speedLevel } = useStore()
+  const { setPage, setVolumePreset, setSpeedLevel, startInfusion, volumePreset, customVolume, speedLevel } = useStore()
 
   const handleVolumeChange = (preset: '100' | '200' | 'custom') => {
     setVolumePreset(preset)
-    if (preset !== 'custom') {
-      setCustomVolume(preset === '100' ? 100 : 200)
-    }
+  }
+
+  const handleCustomVolumeChange = (volume: number) => {
+    useStore.setState({ customVolume: volume, volumePreset: 'custom', volume })
   }
 
   return (
@@ -75,7 +76,7 @@ export function InfusionSetupHome() {
             <input
               type="number"
               value={customVolume}
-              onInput={(e) => setCustomVolume(Number((e.target as HTMLInputElement).value) || 0)}
+              onInput={(e) => handleCustomVolumeChange(Number((e.target as HTMLInputElement).value) || 0)}
               placeholder="输入毫升数"
               class="w-full h-12 px-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center font-medium focus:outline-none focus:ring-2 focus:ring-primary"
             />

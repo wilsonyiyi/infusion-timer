@@ -78,7 +78,7 @@ export const useStore = create<Store>((set, get) => ({
     set({ volumePreset: preset, volume: volumes[preset] })
   },
 
-  setCustomVolume: (volume) => set({ customVolume: volume, volumePreset: 'custom', volume }),
+  setCustomVolume: (volume) => set({ customVolume: volume, volume }),
 
   setSpeedLevel: (level) => set({ speedLevel: level }),
 
