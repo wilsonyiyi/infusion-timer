@@ -7,7 +7,6 @@ export function ActiveInfusionTimer() {
   const {
     pauseInfusion,
     resumeInfusion,
-    stopInfusion,
     completeInfusion,
     clearCurrentRecord,
     adjustEstimate,
@@ -17,6 +16,7 @@ export function ActiveInfusionTimer() {
     startTime,
     totalPausedDuration,
     estimatedMinutes,
+    volume,
   } = useStore();
   const [, navigate] = useLocation();
   const deleteModal = useModal();
@@ -28,6 +28,12 @@ export function ActiveInfusionTimer() {
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
   const [showSafetyAlert, setShowSafetyAlert] = useState(false);
   const [safetyAlertDismissed, setSafetyAlertDismissed] = useState(false);
+
+  const generateScaleMarks = (volume: number) => {
+    return Array.from({ length: 5 }, (_, i) =>
+      Math.round(volume * (1 - i * 0.25))
+    );
+  };
 
   useEffect(() => {
     if (!isRunning || isPaused || !startTime) return;
@@ -201,20 +207,20 @@ export function ActiveInfusionTimer() {
                     <div class="absolute bottom-2 left-1/4 w-1 h-1 bg-white/30 rounded-full"></div>
                   </div>
 
-                  <div class="absolute inset-0 flex flex-col justify-between py-10 pr-4 items-end pointer-events-none opacity-30">
-                    {[200, 160, 120, 80, 40].map((mark, i) => (
-                      <div key={mark} class="flex items-center gap-1">
-                        <span class="text-[8px] font-bold text-slate-400">
-                          {mark}
-                        </span>
-                        <div
-                          class={`w-4 h-[1px] bg-slate-400 ${
-                            i % 2 === 0 ? "" : "ml-6"
-                          }`}
-                        ></div>
-                      </div>
-                    ))}
-                  </div>
+                   <div class="absolute inset-0 flex flex-col justify-between py-10 pr-4 items-end pointer-events-none opacity-30">
+                     {generateScaleMarks(volume).map((mark, i) => (
+                       <div key={mark} class="flex items-center gap-1">
+                         <span class="text-[8px] font-bold text-slate-400">
+                           {mark}
+                         </span>
+                         <div
+                           class={`w-4 h-[1px] bg-slate-400 ${
+                             i % 2 === 0 ? "" : "ml-6"
+                           }`}
+                         ></div>
+                       </div>
+                     ))}
+                   </div>
 
                   <div class="absolute inset-y-0 left-6 w-4 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-50"></div>
                   <div class="absolute inset-y-0 left-2 w-[1px] bg-white/40"></div>
@@ -337,20 +343,20 @@ export function ActiveInfusionTimer() {
                   <div class="absolute top-6 left-2/3 w-1.5 h-1.5 bg-white/20 rounded-full"></div>
                 </div>
 
-                <div class="absolute inset-0 flex flex-col justify-between py-10 pr-4 items-end pointer-events-none opacity-40">
-                  {[200, 160, 120, 80, 40].map((mark, i) => (
-                    <div key={mark} class="flex items-center gap-1">
-                      <span class="text-[8px] font-bold text-slate-400">
-                        {mark}
-                      </span>
-                      <div
-                        class={`w-4 h-[1px] bg-slate-400 ${
-                          i % 2 === 0 ? "" : "ml-6"
-                        }`}
-                      ></div>
-                    </div>
-                  ))}
-                </div>
+                 <div class="absolute inset-0 flex flex-col justify-between py-10 pr-4 items-end pointer-events-none opacity-40">
+                   {generateScaleMarks(volume).map((mark, i) => (
+                     <div key={mark} class="flex items-center gap-1">
+                       <span class="text-[8px] font-bold text-slate-400">
+                         {mark}
+                       </span>
+                       <div
+                         class={`w-4 h-[1px] bg-slate-400 ${
+                           i % 2 === 0 ? "" : "ml-6"
+                         }`}
+                       ></div>
+                     </div>
+                   ))}
+                 </div>
 
                 <div class="absolute inset-y-0 left-6 w-4 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-50"></div>
                 <div class="absolute inset-y-0 left-2 w-[1px] bg-white/40"></div>
