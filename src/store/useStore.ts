@@ -14,6 +14,7 @@ interface InfusionState {
   dropFactor: number
   isRunning: boolean
   isPaused: boolean
+  isCompleted: boolean
   startTime: number | null
   pauseTime: number | null
   totalPausedDuration: number
@@ -35,6 +36,7 @@ interface InfusionActions {
   pauseInfusion: () => void
   resumeInfusion: () => void
   stopInfusion: () => void
+  completeInfusion: () => void
   adjustEstimate: (minutes: number) => void
   setCalibration: (level: CalibrationLevel) => void
   tapForSpeed: () => void
@@ -61,6 +63,7 @@ export const useStore = create<Store>((set, get) => ({
   dropFactor: 20,
   isRunning: false,
   isPaused: false,
+  isCompleted: false,
   startTime: null,
   pauseTime: null,
   totalPausedDuration: 0,
@@ -117,6 +120,7 @@ export const useStore = create<Store>((set, get) => ({
     set({
       isRunning: false,
       isPaused: false,
+      isCompleted: false,
       startTime: null,
       pauseTime: null,
       totalPausedDuration: 0,
@@ -127,6 +131,14 @@ export const useStore = create<Store>((set, get) => ({
       lastTapTime: null,
       measuredDropsPerMinute: 0,
       page: 'setup'
+    })
+  },
+
+  completeInfusion: () => {
+    set({
+      isRunning: false,
+      isPaused: false,
+      isCompleted: true
     })
   },
 
