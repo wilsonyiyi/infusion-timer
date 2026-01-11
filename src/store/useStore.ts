@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { loadInfusionData, saveInfusionData, type StoredInfusionData } from '../utils/storage'
 
 export type SpeedLevel = 'slow' | 'medium' | 'fast'
 export type VolumePreset = '100' | '200' | 'custom'
@@ -51,7 +52,7 @@ const SAFETY_FACTOR = 1.1
 
 type Store = InfusionState & InfusionActions
 
-export const useStore = create<Store>((set, get) => ({
+const INITIAL_STATE: InfusionState = {
   volume: 200,
   volumePreset: '200',
   customVolume: 200,
@@ -69,137 +70,196 @@ export const useStore = create<Store>((set, get) => ({
   firstTapTime: null,
   lastTapTime: null,
   measuredDropsPerMinute: 0,
+}
 
-  setVolumePreset: (preset) => {
-    const volumes = { '100': 100, '200': 200, 'custom': get().customVolume }
-    set({ volumePreset: preset, volume: volumes[preset] })
-  },
-
-  setCustomVolume: (volume) => set({ customVolume: volume, volume }),
-
-  setSpeedLevel: (level) => set({ speedLevel: level }),
-
-  setDropFactor: (factor) => set({ dropFactor: factor }),
-
-  startInfusion: () => {
-    const { calculateEstimatedMinutes } = get()
-    calculateEstimatedMinutes()
-    set({
-      isRunning: true,
-      isPaused: false,
-      startTime: Date.now(),
-      pauseTime: null,
-      totalPausedDuration: 0,
-      calibration: null
-    })
-  },
-
-  pauseInfusion: () => {
-    if (!get().isRunning || get().isPaused) return
-    set({ isPaused: true, pauseTime: Date.now() })
-  },
-
-  resumeInfusion: () => {
-    const { pauseTime, totalPausedDuration } = get()
-    if (!get().isRunning || !get().isPaused || !pauseTime) return
-    set({
-      isPaused: false,
-      pauseTime: null,
-      totalPausedDuration: totalPausedDuration + (Date.now() - pauseTime)
-    })
-  },
-
-  stopInfusion: () => {
-    set({
-      isRunning: false,
-      isPaused: false,
-      startTime: null,
-      pauseTime: null,
-      totalPausedDuration: 0,
-      estimatedMinutes: 0,
-      calibration: null,
-      tapCount: 0,
-      firstTapTime: null,
-      lastTapTime: null,
-      measuredDropsPerMinute: 0
-    })
-  },
-
-  completeInfusion: () => {
-    set({
-      isRunning: false,
-      isPaused: false,
-      isCompleted: true
-    })
-  },
-
-  adjustEstimate: (minutes) => {
-    const { estimatedMinutes } = get()
-    set({ estimatedMinutes: Math.max(0, estimatedMinutes + minutes) })
-  },
-
-  setCalibration: (level) => {
-    const { volume, estimatedMinutes, startTime, totalPausedDuration } = get()
-    if (!startTime) return
-
-    const elapsedMinutes = (Date.now() - startTime - totalPausedDuration) / 60000
-    let newEstimatedMinutes = estimatedMinutes
-
-    if (level === 'high') {
-      const remainingRatio = 0.75
-      const usedRatio = 0.25
-      const currentRate = (volume * usedRatio) / elapsedMinutes
-      newEstimatedMinutes = (volume * remainingRatio) / currentRate
-    } else if (level === 'half') {
-      newEstimatedMinutes = estimatedMinutes
-    } else if (level === 'low') {
-      const remainingRatio = 0.25
-      const usedRatio = 0.75
-      const currentRate = (volume * usedRatio) / elapsedMinutes
-      newEstimatedMinutes = (volume * remainingRatio) / currentRate
+const loadedData = loadInfusionData()
+const initialState = loadedData
+  ? {
+      volume: loadedData.volume,
+      volumePreset: loadedData.volumePreset,
+      customVolume: loadedData.customVolume,
+      speedLevel: loadedData.speedLevel,
+      dropFactor: loadedData.dropFactor,
+      isRunning: loadedData.isRunning,
+      isPaused: loadedData.isPaused,
+      isCompleted: loadedData.isCompleted,
+      startTime: loadedData.startTime,
+      pauseTime: loadedData.pauseTime,
+      totalPausedDuration: loadedData.totalPausedDuration,
+      estimatedMinutes: loadedData.estimatedMinutes,
+      calibration: loadedData.calibration,
+      tapCount: loadedData.tapCount,
+      firstTapTime: loadedData.firstTapTime,
+      lastTapTime: loadedData.lastTapTime,
+      measuredDropsPerMinute: loadedData.measuredDropsPerMinute,
     }
+  : INITIAL_STATE
 
-    set({ calibration: level, estimatedMinutes: Math.max(0, newEstimatedMinutes * SAFETY_FACTOR) })
-  },
+export const useStore = create<Store>((set, get, api) => {
+  // Subscribe to state changes and auto-persist
+  api.subscribe((state) => {
+    const stateToSave: Omit<StoredInfusionData, 'timestamp'> = {
+      volume: state.volume,
+      volumePreset: state.volumePreset,
+      customVolume: state.customVolume,
+      speedLevel: state.speedLevel,
+      dropFactor: state.dropFactor,
+      isRunning: state.isRunning,
+      isPaused: state.isPaused,
+      isCompleted: state.isCompleted,
+      startTime: state.startTime,
+      pauseTime: state.pauseTime,
+      totalPausedDuration: state.totalPausedDuration,
+      estimatedMinutes: state.estimatedMinutes,
+      calibration: state.calibration,
+      tapCount: state.tapCount,
+      firstTapTime: state.firstTapTime,
+      lastTapTime: state.lastTapTime,
+      measuredDropsPerMinute: state.measuredDropsPerMinute,
+    }
+    saveInfusionData(stateToSave)
+  })
 
-  tapForSpeed: () => {
-    const state = get()
-    const now = Date.now()
+  return {
+    ...initialState,
 
-    if (state.firstTapTime === null) {
-      set({ firstTapTime: now, tapCount: 1, lastTapTime: now })
-    } else {
-      const newTapCount = state.tapCount + 1
-      const timeDiff = (now - state.firstTapTime) / 60000
-      if (timeDiff >= 0.1) {
-        const dropsPerMinute = newTapCount / timeDiff
-        set({
-          tapCount: newTapCount,
-          lastTapTime: now,
-          measuredDropsPerMinute: Math.round(dropsPerMinute)
-        })
+    setVolumePreset: (preset) => {
+      const volumes = { '100': 100, '200': 200, 'custom': get().customVolume }
+      set({ volumePreset: preset, volume: volumes[preset] })
+    },
+
+    setCustomVolume: (volume) => {
+      set({ customVolume: volume, volume })
+    },
+
+    setSpeedLevel: (level) => {
+      set({ speedLevel: level })
+    },
+
+    setDropFactor: (factor) => {
+      set({ dropFactor: factor })
+    },
+
+    startInfusion: () => {
+      const { calculateEstimatedMinutes } = get()
+      calculateEstimatedMinutes()
+      set({
+        isRunning: true,
+        isPaused: false,
+        startTime: Date.now(),
+        pauseTime: null,
+        totalPausedDuration: 0,
+        calibration: null
+      })
+    },
+
+    pauseInfusion: () => {
+      if (!get().isRunning || get().isPaused) return
+      set({ isPaused: true, pauseTime: Date.now() })
+    },
+
+    resumeInfusion: () => {
+      const { pauseTime, totalPausedDuration } = get()
+      if (!get().isRunning || !get().isPaused || !pauseTime) return
+      set({
+        isPaused: false,
+        pauseTime: null,
+        totalPausedDuration: totalPausedDuration + (Date.now() - pauseTime)
+      })
+    },
+
+    stopInfusion: () => {
+      set({
+        isRunning: false,
+        isPaused: false,
+        startTime: null,
+        pauseTime: null,
+        totalPausedDuration: 0,
+        estimatedMinutes: 0,
+        calibration: null,
+        tapCount: 0,
+        firstTapTime: null,
+        lastTapTime: null,
+        measuredDropsPerMinute: 0
+      })
+    },
+
+    completeInfusion: () => {
+      set({
+        isRunning: false,
+        isPaused: false,
+        isCompleted: true
+      })
+    },
+
+    adjustEstimate: (minutes) => {
+      const { estimatedMinutes } = get()
+      set({ estimatedMinutes: Math.max(0, estimatedMinutes + minutes) })
+    },
+
+    setCalibration: (level) => {
+      const { volume, estimatedMinutes, startTime, totalPausedDuration } = get()
+      if (!startTime) return
+
+      const elapsedMinutes = (Date.now() - startTime - totalPausedDuration) / 60000
+      let newEstimatedMinutes = estimatedMinutes
+
+      if (level === 'high') {
+        const remainingRatio = 0.75
+        const usedRatio = 0.25
+        const currentRate = (volume * usedRatio) / elapsedMinutes
+        newEstimatedMinutes = (volume * remainingRatio) / currentRate
+      } else if (level === 'half') {
+        newEstimatedMinutes = estimatedMinutes
+      } else if (level === 'low') {
+        const remainingRatio = 0.25
+        const usedRatio = 0.75
+        const currentRate = (volume * usedRatio) / elapsedMinutes
+        newEstimatedMinutes = (volume * remainingRatio) / currentRate
       }
+
+      set({ calibration: level, estimatedMinutes: Math.max(0, newEstimatedMinutes * SAFETY_FACTOR) })
+    },
+
+    tapForSpeed: () => {
+      const state = get()
+      const now = Date.now()
+
+      if (state.firstTapTime === null) {
+        set({ firstTapTime: now, tapCount: 1, lastTapTime: now })
+      } else {
+        const newTapCount = state.tapCount + 1
+        const timeDiff = (now - state.firstTapTime) / 60000
+        if (timeDiff >= 0.1) {
+          const dropsPerMinute = newTapCount / timeDiff
+          set({
+            tapCount: newTapCount,
+            lastTapTime: now,
+            measuredDropsPerMinute: Math.round(dropsPerMinute)
+          })
+        }
+      }
+    },
+
+    resetTapCount: () => {
+      set({ tapCount: 0, firstTapTime: null, lastTapTime: null, measuredDropsPerMinute: 0 })
+    },
+
+    calculateEstimatedMinutes: () => {
+      const { volume, speedLevel, dropFactor, measuredDropsPerMinute } = get()
+
+      let dropsPerMinute
+      if (measuredDropsPerMinute > 0) {
+        dropsPerMinute = measuredDropsPerMinute
+      } else {
+        dropsPerMinute = SPEED_RANGES[speedLevel].avg
+      }
+
+      const dropsPerMl = dropFactor
+      const totalDrops = volume * dropsPerMl
+      const estimatedMinutes = (totalDrops / dropsPerMinute) * SAFETY_FACTOR
+
+      set({ estimatedMinutes: Math.round(estimatedMinutes) })
     }
-  },
-
-  resetTapCount: () => {
-    set({ tapCount: 0, firstTapTime: null, lastTapTime: null, measuredDropsPerMinute: 0 })
-  },
-
-  calculateEstimatedMinutes: () => {
-    const { volume, speedLevel, dropFactor, measuredDropsPerMinute } = get()
-
-    let dropsPerMinute
-    if (measuredDropsPerMinute > 0) {
-      dropsPerMinute = measuredDropsPerMinute
-    } else {
-      dropsPerMinute = SPEED_RANGES[speedLevel].avg
-    }
-
-    const dropsPerMl = dropFactor
-    const totalDrops = volume * dropsPerMl
-    const estimatedMinutes = (totalDrops / dropsPerMinute) * SAFETY_FACTOR
-
-    set({ estimatedMinutes: Math.round(estimatedMinutes) })
   }
-}))
+})

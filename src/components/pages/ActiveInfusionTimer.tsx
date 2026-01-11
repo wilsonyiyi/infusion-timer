@@ -1,6 +1,7 @@
 import { useStore } from "../../store/useStore";
 import { useEffect, useState } from "preact/hooks";
 import { useLocation } from "wouter-preact";
+import { Modal, useModal } from "../../components/ui/Modal";
 
 export function ActiveInfusionTimer() {
   const {
@@ -17,6 +18,7 @@ export function ActiveInfusionTimer() {
     estimatedMinutes,
   } = useStore();
   const [, navigate] = useLocation();
+  const deleteModal = useModal();
   const [remainingMinutes, setRemainingMinutes] = useState(estimatedMinutes);
   const [liquidLevel, setLiquidLevel] = useState(100);
   const [warningLevel, setWarningLevel] = useState<
@@ -73,6 +75,20 @@ export function ActiveInfusionTimer() {
   const handleStartNew = () => {
     completeInfusion();
     navigate("/");
+  };
+
+  const handleDeleteRecord = () => {
+    deleteModal.open();
+  };
+
+  const confirmDelete = () => {
+    stopInfusion();
+    navigate("/");
+    deleteModal.close();
+  };
+
+  const cancelDelete = () => {
+    deleteModal.close();
   };
 
   const warningMessage = () => {
@@ -382,7 +398,7 @@ export function ActiveInfusionTimer() {
               {isPaused ? "继续计时" : "暂停计时"}
             </button>
             <button
-              onClick={stopInfusion}
+              onClick={handleDeleteRecord}
               class="w-full bg-white text-red-600 font-bold py-3 rounded-2xl border border-red-200 shadow-sm active:scale-[0.98] transition-all hover:bg-red-50"
             >
               删除本次记录
