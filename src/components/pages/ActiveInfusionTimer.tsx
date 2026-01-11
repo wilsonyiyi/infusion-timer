@@ -9,6 +9,7 @@ export function ActiveInfusionTimer() {
     resumeInfusion,
     stopInfusion,
     completeInfusion,
+    clearCurrentRecord,
     adjustEstimate,
     isRunning,
     isPaused,
@@ -82,7 +83,7 @@ export function ActiveInfusionTimer() {
   };
 
   const confirmDelete = () => {
-    stopInfusion();
+    clearCurrentRecord();
     navigate("/");
     deleteModal.close();
   };
@@ -101,7 +102,25 @@ export function ActiveInfusionTimer() {
   };
 
   return (
-    <div class="min-h-screen flex flex-col bg-medical-bg text-slate-900 font-display">
+    <>
+      <Modal
+        isOpen={deleteModal.isOpen}
+        title="确认删除"
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        confirmText="确认删除"
+        cancelText="取消"
+        confirmButtonClass="bg-red-600 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg shadow-red-600/20 active:scale-[0.98] transition-all"
+      >
+        <p class="text-slate-600 text-center leading-relaxed">
+          确定要删除本次记录吗？
+        </p>
+        <p class="text-sm text-slate-500 mt-2">
+          这将清除所有计时数据，包括校准信息、滴速测量等设置。
+        </p>
+      </Modal>
+
+      <div class="min-h-screen flex flex-col bg-medical-bg text-slate-900 font-display">
       {isCompleted ? (
         <>
           <div class="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 bg-medical-bg/80 backdrop-blur-sm">
@@ -407,5 +426,6 @@ export function ActiveInfusionTimer() {
         </>
       )}
     </div>
+    </>
   );
 }

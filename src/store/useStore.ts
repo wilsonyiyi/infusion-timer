@@ -35,6 +35,7 @@ interface InfusionActions {
   resumeInfusion: () => void
   stopInfusion: () => void
   completeInfusion: () => void
+  clearCurrentRecord: () => void
   adjustEstimate: (minutes: number) => void
   setCalibration: (level: CalibrationLevel) => void
   tapForSpeed: () => void
@@ -168,21 +169,38 @@ export const useStore = create<Store>((set, get, api) => {
       })
     },
 
-    stopInfusion: () => {
-      set({
-        isRunning: false,
-        isPaused: false,
-        startTime: null,
-        pauseTime: null,
-        totalPausedDuration: 0,
-        estimatedMinutes: 0,
-        calibration: null,
-        tapCount: 0,
-        firstTapTime: null,
-        lastTapTime: null,
-        measuredDropsPerMinute: 0
-      })
-    },
+  stopInfusion: () => {
+    set({
+      isRunning: false,
+      isPaused: false,
+      startTime: null,
+      pauseTime: null,
+      totalPausedDuration: 0,
+      estimatedMinutes: 0,
+      calibration: null,
+      tapCount: 0,
+      firstTapTime: null,
+      lastTapTime: null,
+      measuredDropsPerMinute: 0
+    })
+  },
+
+  clearCurrentRecord: () => {
+    set({
+      isRunning: false,
+      isPaused: false,
+      isCompleted: false,
+      startTime: null,
+      pauseTime: null,
+      totalPausedDuration: 0,
+      estimatedMinutes: 0,
+      calibration: null,
+      tapCount: 0,
+      firstTapTime: null,
+      lastTapTime: null,
+      measuredDropsPerMinute: 0
+    })
+  },
 
     completeInfusion: () => {
       set({
