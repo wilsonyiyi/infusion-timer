@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "preact": "^10.27.2",
+    "wouter-preact": "^3.9.0",
     "zustand": "^5.0.9"
   },
   "devDependencies": {

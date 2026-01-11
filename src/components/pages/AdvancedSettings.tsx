@@ -1,14 +1,16 @@
 import { useStore } from '../../store/useStore'
+import { useLocation } from 'wouter-preact'
 
 export function AdvancedSettings() {
-  const { setPage, setDropFactor, setCalibration, dropFactor, calibration, measuredDropsPerMinute, tapForSpeed, resetTapCount } = useStore()
+  const { setDropFactor, setCalibration, dropFactor, calibration, measuredDropsPerMinute, tapForSpeed, resetTapCount } = useStore()
+  const [, navigate] = useLocation()
 
   return (
     <div class="min-h-screen flex flex-col bg-slate-100 text-slate-900 font-display">
       <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
         <div class="flex items-center p-4 justify-between max-w-md mx-auto">
           <button
-            onClick={() => setPage('setup')}
+            onClick={() => navigate('/')}
             class="flex items-center text-primary active:opacity-50 transition-opacity"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +140,7 @@ export function AdvancedSettings() {
 
         <div class="mt-12 px-5">
           <button
-            onClick={() => setPage('setup')}
+            onClick={() => navigate('/')}
             class="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/25 active:scale-[0.98] transition-all text-lg"
           >
             保存并应用设置

@@ -1,7 +1,9 @@
 import { useStore } from '../../store/useStore'
+import { useLocation } from 'wouter-preact'
 
 export function InfusionSetupHome() {
-  const { setPage, setVolumePreset, setSpeedLevel, startInfusion, volumePreset, customVolume, speedLevel } = useStore()
+  const { setVolumePreset, setSpeedLevel, startInfusion, volumePreset, customVolume, speedLevel } = useStore()
+  const [, navigate] = useLocation()
 
   const handleVolumeChange = (preset: '100' | '200' | 'custom') => {
     setVolumePreset(preset)
@@ -18,7 +20,7 @@ export function InfusionSetupHome() {
         <h1 class="text-[17px] font-semibold flex-1 text-center tracking-tight">输液设置</h1>
         <div class="flex w-12 items-center justify-end">
           <button
-            onClick={() => setPage('settings')}
+            onClick={() => navigate('/settings')}
             class="flex items-center justify-center rounded-full h-10 w-10 text-slate-400 active:bg-slate-100 transition-colors"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

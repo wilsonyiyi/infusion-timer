@@ -1,12 +1,14 @@
 import { useStore } from '../../store/useStore'
 import { useEffect, useState } from 'preact/hooks'
+import { useLocation } from 'wouter-preact'
 
 export function ActiveInfusionTimer() {
-  const { setPage, pauseInfusion, resumeInfusion, stopInfusion, completeInfusion, adjustEstimate, isRunning, isPaused, isCompleted, startTime, totalPausedDuration, estimatedMinutes } = useStore()
+  const { pauseInfusion, resumeInfusion, stopInfusion, completeInfusion, adjustEstimate, isRunning, isPaused, isCompleted, startTime, totalPausedDuration, estimatedMinutes } = useStore()
+  const [, navigate] = useLocation()
   const [remainingMinutes, setRemainingMinutes] = useState(estimatedMinutes)
   const [liquidLevel, setLiquidLevel] = useState(100)
   const [warningLevel, setWarningLevel] = useState<'low' | 'medium' | 'high' | null>(null)
-  const [showCompletionAnimation, setShowCompletionAnimation] = useState(true)
+  const [showCompletionAnimation, setShowCompletionAnimation] = useState(false)
 
   useEffect(() => {
     if (!isRunning || isPaused || !startTime) return
@@ -48,7 +50,7 @@ export function ActiveInfusionTimer() {
 
   const handleStartNew = () => {
     completeInfusion()
-    setPage('setup')
+    navigate('/')
   }
 
   const warningMessage = () => {
@@ -204,7 +206,7 @@ export function ActiveInfusionTimer() {
             <h2 class="text-slate-900 text-lg font-bold leading-tight flex-1 text-center">实时输液计时</h2>
             <div class="flex w-12 items-center justify-end">
               <button
-                onClick={() => setPage('settings')}
+                onClick={() => navigate('/settings')}
                 class="flex items-center justify-center rounded-lg h-12 text-slate-600"
               >
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

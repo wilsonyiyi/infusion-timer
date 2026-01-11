@@ -2,11 +2,9 @@ import { create } from 'zustand'
 
 export type SpeedLevel = 'slow' | 'medium' | 'fast'
 export type VolumePreset = '100' | '200' | 'custom'
-export type Page = 'setup' | 'timer' | 'settings'
 export type CalibrationLevel = 'high' | 'half' | 'low'
 
 interface InfusionState {
-  page: Page
   volume: number
   volumePreset: VolumePreset
   customVolume: number
@@ -27,7 +25,6 @@ interface InfusionState {
 }
 
 interface InfusionActions {
-  setPage: (page: Page) => void
   setVolumePreset: (preset: VolumePreset) => void
   setCustomVolume: (volume: number) => void
   setSpeedLevel: (level: SpeedLevel) => void
@@ -55,7 +52,6 @@ const SAFETY_FACTOR = 1.1
 type Store = InfusionState & InfusionActions
 
 export const useStore = create<Store>((set, get) => ({
-  page: 'setup',
   volume: 200,
   volumePreset: '200',
   customVolume: 200,
@@ -73,8 +69,6 @@ export const useStore = create<Store>((set, get) => ({
   firstTapTime: null,
   lastTapTime: null,
   measuredDropsPerMinute: 0,
-
-  setPage: (page) => set({ page }),
 
   setVolumePreset: (preset) => {
     const volumes = { '100': 100, '200': 200, 'custom': get().customVolume }
@@ -96,8 +90,7 @@ export const useStore = create<Store>((set, get) => ({
       startTime: Date.now(),
       pauseTime: null,
       totalPausedDuration: 0,
-      calibration: null,
-      page: 'timer'
+      calibration: null
     })
   },
 
@@ -120,7 +113,6 @@ export const useStore = create<Store>((set, get) => ({
     set({
       isRunning: false,
       isPaused: false,
-      isCompleted: false,
       startTime: null,
       pauseTime: null,
       totalPausedDuration: 0,
@@ -129,8 +121,7 @@ export const useStore = create<Store>((set, get) => ({
       tapCount: 0,
       firstTapTime: null,
       lastTapTime: null,
-      measuredDropsPerMinute: 0,
-      page: 'setup'
+      measuredDropsPerMinute: 0
     })
   },
 
