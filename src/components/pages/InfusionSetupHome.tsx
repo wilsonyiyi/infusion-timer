@@ -2,7 +2,6 @@ import { useStore } from '../../store/useStore'
 
 export function InfusionSetupHome() {
   const { setPage, setVolumePreset, setCustomVolume, setSpeedLevel, startInfusion, volumePreset, customVolume, speedLevel } = useStore()
-  console.log('volumePreset::: ', volumePreset);
 
   const handleVolumeChange = (preset: '100' | '200' | 'custom') => {
     setVolumePreset(preset)
@@ -43,7 +42,7 @@ export function InfusionSetupHome() {
               <input
                 type="radio"
                 name="volume"
-                value="100ml"
+                value="100"
                 checked={volumePreset === '100'}
                 onChange={() => handleVolumeChange('100')}
                 class="sr-only"
@@ -54,7 +53,7 @@ export function InfusionSetupHome() {
               <input
                 type="radio"
                 name="volume"
-                value="200ml"
+                value="200"
                 checked={volumePreset === '200'}
                 onChange={() => handleVolumeChange('200')}
                 class="sr-only"
