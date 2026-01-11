@@ -152,18 +152,18 @@ export function ActiveInfusionTimer() {
         <p class="text-center text-slate-400 text-xs font-medium uppercase tracking-[0.1em] mb-4">流速校准</p>
         <div class="flex gap-4">
           <button
-            onClick={() => adjustEstimate(5)}
+            onClick={() => adjustEstimate(1)}
             class="flex-1 flex flex-col items-center justify-center rounded-2xl h-16 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors active:scale-95"
           >
             <span class="text-sm font-bold">感觉变慢了</span>
-            <span class="text-[10px] text-slate-400 font-medium">+5分钟</span>
+            <span class="text-[10px] text-slate-400 font-medium">+1分钟</span>
           </button>
           <button
-            onClick={() => adjustEstimate(-5)}
+            onClick={() => adjustEstimate(-1)}
             class="flex-1 flex flex-col items-center justify-center rounded-2xl h-16 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors active:scale-95"
           >
             <span class="text-sm font-bold">感觉变快了</span>
-            <span class="text-[10px] text-slate-400 font-medium">-5分钟</span>
+            <span class="text-[10px] text-slate-400 font-medium">-1分钟</span>
           </button>
         </div>
       </div>
