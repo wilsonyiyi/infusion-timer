@@ -122,7 +122,7 @@ export function ActiveInfusionTimer() {
           <div class="mt-4 flex flex-col items-center">
             <div class="w-6 h-12 bg-white/40 border border-white/80 rounded-full backdrop-blur-sm relative overflow-hidden">
               <div class="absolute top-1 left-1/2 -translate-x-1/2 w-0.5 h-2 bg-slate-400"></div>
-              <div class={`absolute top-4 left-1/2 -translate-x-1/2 ${!isPaused ? 'animate-bounce' : ''}`}>
+              <div class={`absolute inset-0 flex items-center justify-center ${!isPaused ? 'animate-bounce' : ''}`}>
                 <span class="text-primary text-xl">💧</span>
               </div>
             </div>
