@@ -26,6 +26,7 @@ export function ActiveInfusionTimer() {
     "low" | "medium" | "high" | null
   >(null);
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
+  const [showSafetyAlert, setShowSafetyAlert] = useState(false);
 
   useEffect(() => {
     if (!isRunning || isPaused || !startTime) return;
@@ -42,10 +43,13 @@ export function ActiveInfusionTimer() {
 
       if (remaining <= 5 && remaining > 0) {
         setWarningLevel("high");
+        setShowSafetyAlert(true);
       } else if (remaining <= 10 && remaining > 5) {
         setWarningLevel("medium");
+        setShowSafetyAlert(true);
       } else {
         setWarningLevel(null);
+        setShowSafetyAlert(false);
       }
 
       if (remaining <= 0 && isRunning && !isCompleted) {
@@ -74,7 +78,7 @@ export function ActiveInfusionTimer() {
   }, [isCompleted, showCompletionAnimation]);
 
   const handleStartNew = () => {
-    completeInfusion();
+    clearCurrentRecord();
     navigate("/");
   };
 
@@ -244,12 +248,6 @@ export function ActiveInfusionTimer() {
             >
               开始新的输液
             </button>
-            <button
-              onClick={stopInfusion}
-              class="w-full bg-white text-slate-700 font-bold py-4 rounded-2xl border border-slate-200 shadow-sm active:scale-[0.98] transition-all hover:bg-slate-50"
-            >
-              返回设置
-            </button>
           </div>
 
           <style>{`
@@ -277,6 +275,17 @@ export function ActiveInfusionTimer() {
               100% {
                 transform: scale(1);
                 opacity: 1;
+              }
+            }
+            .animate-pulse-slow {
+              animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            @keyframes pulse-slow {
+              0%, 100% {
+                opacity: 1;
+              }
+              50% {
+                opacity: 0.8;
               }
             }
           `}</style>
@@ -361,28 +370,6 @@ export function ActiveInfusionTimer() {
             </div>
           </div>
 
-          {warningMessage() && (
-            <div class="px-4 py-2">
-              <div class="flex flex-col gap-2 rounded-2xl border border-primary/20 bg-white p-5 shadow-sm">
-                <div class="flex items-center gap-2">
-                  <div class="bg-primary/10 p-1.5 rounded-lg">
-                    <svg
-                      class="w-5 h-5 text-primary"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-                    </svg>
-                  </div>
-                  <p class="text-slate-900 text-base font-bold">安全提醒</p>
-                </div>
-                <p class="text-slate-600 text-sm font-normal leading-relaxed">
-                  {warningMessage()}
-                </p>
-              </div>
-            </div>
-          )}
-
           <div class="px-4 py-6">
             <p class="text-center text-slate-400 text-xs font-medium uppercase tracking-[0.1em] mb-4">
               流速校准
@@ -422,7 +409,43 @@ export function ActiveInfusionTimer() {
             >
               删除本次记录
             </button>
+            <div class="w-32 h-1 bg-slate-200 rounded-full mt-2"></div>
           </div>
+
+          {/* Centered Floating Safety Alert */}
+          {showSafetyAlert && (
+            <div class="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
+              <div class="bg-white rounded-2xl border border-primary/20 shadow-lg p-4 max-w-sm mx-4 animate-pulse-slow pointer-events-auto">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex items-center gap-3 flex-1 min-w-0">
+                    <div class="bg-primary/10 p-2 rounded-lg animate-pulse flex-shrink-0">
+                      <svg
+                        class="w-5 h-5 text-primary"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+                      </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-slate-900 text-sm font-bold">安全提醒</p>
+                      <p class="text-slate-600 text-xs leading-relaxed truncate">
+                        {warningMessage()}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowSafetyAlert(false)}
+                    class="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
