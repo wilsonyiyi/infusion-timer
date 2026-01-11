@@ -45,8 +45,8 @@ interface InfusionActions {
 
 const SPEED_RANGES = {
   slow: { min: 20, max: 40, avg: 30 },
-  medium: { min: 40, max: 80, avg: 60 },
-  fast: { min: 80, max: 150, avg: 120 },
+  medium: { min: 40, max: 60, avg: 50 },
+  fast: { min: 60, max: 80, avg: 70 },
 }
 
 const SAFETY_FACTOR = 1.1

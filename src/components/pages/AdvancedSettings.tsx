@@ -137,8 +137,10 @@ export function AdvancedSettings() {
             </div>
           </div>
         </section>
+      </main>
 
-        <div class="mt-12 px-5">
+      <footer class="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t border-slate-200 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div class="max-w-md mx-auto">
           <button
             onClick={() => navigate('/')}
             class="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/25 active:scale-[0.98] transition-all text-lg"
@@ -146,7 +148,7 @@ export function AdvancedSettings() {
             保存并应用设置
           </button>
         </div>
-      </main>
+      </footer>
     </div>
   )
 }

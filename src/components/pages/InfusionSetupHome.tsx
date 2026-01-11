@@ -129,7 +129,7 @@ export function InfusionSetupHome() {
                 <span class="text-3xl">🌊</span>
                 <div class="text-center">
                   <p class="text-sm font-bold">适中</p>
-                  <p class="text-[10px] text-slate-400">40-80 滴/分</p>
+                  <p class="text-[10px] text-slate-400">40-60 滴/分</p>
                 </div>
               </div>
             </label>
@@ -145,8 +145,8 @@ export function InfusionSetupHome() {
               <div class="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-transparent bg-white dark:bg-slate-800 p-5 shadow-lg shadow-slate-200/50 dark:shadow-black/20 transition-all peer-checked:border-primary peer-checked:bg-primary/5">
                 <span class="text-3xl">⚡</span>
                 <div class="text-center">
-                  <p class="text-sm font-bold">加速</p>
-                  <p class="text-[10px] text-slate-400">80-150 滴/分</p>
+                  <p class="text-sm font-bold">快速</p>
+                  <p class="text-[10px] text-slate-400">60-80 滴/分</p>
                 </div>
               </div>
             </label>
