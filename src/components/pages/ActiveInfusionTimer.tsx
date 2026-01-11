@@ -381,7 +381,12 @@ export function ActiveInfusionTimer() {
             >
               {isPaused ? "继续计时" : "暂停计时"}
             </button>
-            <div class="w-32 h-1 bg-slate-200 rounded-full mt-2"></div>
+            <button
+              onClick={stopInfusion}
+              class="w-full bg-white text-red-600 font-bold py-3 rounded-2xl border border-red-200 shadow-sm active:scale-[0.98] transition-all hover:bg-red-50"
+            >
+              删除本次记录
+            </button>
           </div>
         </>
       )}
