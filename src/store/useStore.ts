@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 export type SpeedLevel = 'slow' | 'medium' | 'fast'
-export type VolumePreset = '250' | '500' | 'custom'
+export type VolumePreset = '100' | '200' | 'custom'
 export type Page = 'setup' | 'timer' | 'settings'
 export type CalibrationLevel = 'high' | 'half' | 'low'
 
@@ -54,9 +54,9 @@ type Store = InfusionState & InfusionActions
 
 export const useStore = create<Store>((set, get) => ({
   page: 'setup',
-  volume: 500,
-  volumePreset: '500',
-  customVolume: 500,
+  volume: 200,
+  volumePreset: '200',
+  customVolume: 200,
   speedLevel: 'medium',
   dropFactor: 20,
   isRunning: false,
@@ -74,7 +74,7 @@ export const useStore = create<Store>((set, get) => ({
   setPage: (page) => set({ page }),
 
   setVolumePreset: (preset) => {
-    const volumes = { '250': 250, '500': 500, 'custom': get().customVolume }
+    const volumes = { '100': 100, '200': 200, 'custom': get().customVolume }
     set({ volumePreset: preset, volume: volumes[preset] })
   },
 

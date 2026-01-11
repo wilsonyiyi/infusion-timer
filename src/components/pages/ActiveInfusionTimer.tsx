@@ -102,7 +102,7 @@ export function ActiveInfusionTimer() {
             </div>
 
             <div class="absolute inset-0 flex flex-col justify-between py-10 pr-4 items-end pointer-events-none opacity-40">
-              {[500, 400, 300, 200, 100].map((mark, i) => (
+              {[200, 160, 120, 80, 40].map((mark, i) => (
                 <div key={mark} class="flex items-center gap-1">
                   <span class="text-[8px] font-bold text-slate-400">{mark}</span>
                   <div class={`w-4 h-[1px] bg-slate-400 ${i % 2 === 0 ? '' : 'ml-6'}`}></div>

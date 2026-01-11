@@ -2,11 +2,12 @@ import { useStore } from '../../store/useStore'
 
 export function InfusionSetupHome() {
   const { setPage, setVolumePreset, setCustomVolume, setSpeedLevel, startInfusion, volumePreset, customVolume, speedLevel } = useStore()
+  console.log('volumePreset::: ', volumePreset);
 
-  const handleVolumeChange = (preset: '250' | '500' | 'custom') => {
+  const handleVolumeChange = (preset: '100' | '200' | 'custom') => {
     setVolumePreset(preset)
     if (preset !== 'custom') {
-      setCustomVolume(preset === '250' ? 250 : 500)
+      setCustomVolume(preset === '100' ? 100 : 200)
     }
   }
 
@@ -38,24 +39,24 @@ export function InfusionSetupHome() {
           </div>
           <div class="flex h-12 items-center justify-center rounded-2xl bg-slate-200/60 dark:bg-slate-800/60 p-1">
             <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-xl px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-slate-700 has-[:checked]:shadow-sm has-[:checked]:text-primary text-slate-500 dark:text-slate-400 text-sm font-medium transition-all">
-              <span>250ml</span>
+              <span>100ml</span>
               <input
                 type="radio"
                 name="volume"
-                value="250ml"
-                checked={volumePreset === '250'}
-                onChange={() => handleVolumeChange('250')}
+                value="100ml"
+                checked={volumePreset === '100'}
+                onChange={() => handleVolumeChange('100')}
                 class="sr-only"
               />
             </label>
             <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-xl px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-slate-700 has-[:checked]:shadow-sm has-[:checked]:text-primary text-slate-500 dark:text-slate-400 text-sm font-medium transition-all">
-              <span>500ml</span>
+              <span>200ml</span>
               <input
                 type="radio"
                 name="volume"
-                value="500ml"
-                checked={volumePreset === '500'}
-                onChange={() => handleVolumeChange('500')}
+                value="200ml"
+                checked={volumePreset === '200'}
+                onChange={() => handleVolumeChange('200')}
                 class="sr-only"
               />
             </label>
