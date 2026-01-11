@@ -13,6 +13,11 @@ export function InfusionSetupHome() {
     useStore.setState({ customVolume: volume, volumePreset: 'custom', volume })
   }
 
+  const handleStartInfusion = () => {
+    startInfusion()
+    navigate('/timer')
+  }
+
   return (
     <div class="min-h-screen flex flex-col bg-medical-light dark:bg-medical-dark text-slate-900 dark:text-slate-100 font-display">
       <header class="flex items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 sticky top-0 z-20 border-b border-slate-100 dark:border-slate-800">
@@ -160,7 +165,7 @@ export function InfusionSetupHome() {
 
       <footer class="p-6 pb-10 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 space-y-5">
         <button
-          onClick={startInfusion}
+          onClick={handleStartInfusion}
           class="w-full h-[56px] bg-primary text-white font-semibold text-[17px] rounded-2xl shadow-xl shadow-primary/20 active:scale-[0.97] transition-all flex items-center justify-center gap-2"
         >
           <span>开始输液</span>

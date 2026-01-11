@@ -204,16 +204,6 @@ export function ActiveInfusionTimer() {
               </button>
             </div>
             <h2 class="text-slate-900 text-lg font-bold leading-tight flex-1 text-center">实时输液计时</h2>
-            <div class="flex w-12 items-center justify-end">
-              <button
-                onClick={() => navigate('/settings')}
-                class="flex items-center justify-center rounded-lg h-12 text-slate-600"
-              >
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                </svg>
-              </button>
-            </div>
           </div>
 
       <div class="flex flex-col items-center px-4">
