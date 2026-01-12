@@ -182,8 +182,8 @@ export function ActiveInfusionTimer() {
             <h1 class="text-slate-900 tracking-tight text-[40px] font-bold leading-tight text-center mb-2">
               输液完成
             </h1>
-            <p class="text-slate-500 text-base text-center mb-10 max-w-[280px] leading-relaxed">
-              您的输液治疗已顺利完成，感谢您的配合
+            <p class="text-slate-500 text-base text-center mb-10 max-w-[320px] leading-relaxed">
+              您的输液治疗已顺利完成，祝您早日康复！
             </p>
 
             <div class="flex w-full grow justify-center items-start relative min-h-[320px]">
