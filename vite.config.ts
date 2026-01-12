@@ -7,7 +7,7 @@ export default defineConfig({
     preact(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['infusion-icon.svg'],
+      includeAssets: ['infusion-timer-icon.svg'],
       devOptions: {
         enabled: true
       },
@@ -27,7 +27,7 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'infusion-icon.svg',
+            src: 'infusion-timer-icon.svg',
             sizes: 'any',
             type: 'image/svg+xml'
           }
