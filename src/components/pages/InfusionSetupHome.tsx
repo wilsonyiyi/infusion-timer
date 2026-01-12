@@ -27,7 +27,7 @@ export function InfusionSetupHome() {
     <div class="min-h-screen flex flex-col bg-medical-light dark:bg-medical-dark text-slate-900 dark:text-slate-100 font-display">
       <header class="flex items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 sticky top-0 z-20 border-b border-slate-100 dark:border-slate-800">
         <div class="w-12"></div>
-        <h1 class="text-[17px] font-semibold flex-1 text-center tracking-tight">输液设置</h1>
+        <h1 class="text-[17px] font-semibold flex-1 text-center tracking-tight">输液助手</h1>
         <div class="flex w-12 items-center justify-end">
           <button
             onClick={() => navigate('/settings')}
