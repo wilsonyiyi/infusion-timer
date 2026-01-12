@@ -126,8 +126,10 @@ export function InfusionSetupHome() {
                 改用预设速度
               </button>
             </div>
-          )}
-          <div class="grid grid-cols-3 gap-3">
+           )}
+
+           {!(measuredDropsPerMinute > 0) && (
+             <div class="grid grid-cols-3 gap-3">
             <label class="relative cursor-pointer group">
               <input
                 type="radio"
@@ -178,9 +180,10 @@ export function InfusionSetupHome() {
                   <p class="text-[10px] text-slate-400">60-80 滴/分</p>
                 </div>
               </div>
-            </label>
-          </div>
-        </section>
+             </label>
+           </div>
+           )}
+         </section>
 
         <div class="flex-1 flex flex-col items-center justify-center py-4 space-y-4">
           <div class="w-32 h-32 rounded-full bg-primary/5 flex items-center justify-center">

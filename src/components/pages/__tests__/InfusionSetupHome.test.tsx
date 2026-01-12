@@ -243,47 +243,131 @@ describe('InfusionSetupHome - Volume Selection', () => {
     })
   })
 
-  it('switches volume presets correctly', () => {
-    let currentPreset: '100' | '200' | 'custom' = '100'
+   it('switches volume presets correctly', () => {
+     let currentPreset: '100' | '200' | 'custom' = '100'
 
-    vi.mocked(useStore).mockImplementation(() => ({
-      volumePreset: currentPreset,
-      customVolume: 100,
-      speedLevel: 'medium',
-      setPage: mockSetPage,
-      setVolumePreset: (preset: '100' | '200' | 'custom') => {
-        currentPreset = preset
-        mockSetVolumePreset(preset)
-      },
-      setSpeedLevel: mockSetSpeedLevel,
-      startInfusion: mockStartInfusion,
-      volume: 100,
-      isRunning: false,
-      isPaused: false,
-      startTime: null,
-      pauseTime: null,
-      totalPausedDuration: 0,
-      estimatedMinutes: 0,
-      calibration: null,
-      tapCount: 0,
-      firstTapTime: null,
-      lastTapTime: null,
-      measuredDropsPerMinute: 0,
-      pauseInfusion: vi.fn(),
-      resumeInfusion: vi.fn(),
-      stopInfusion: vi.fn(),
-      adjustEstimate: vi.fn(),
-      setCalibration: vi.fn(),
+     vi.mocked(useStore).mockImplementation(() => ({
+       volumePreset: currentPreset,
+       customVolume: 100,
+       speedLevel: 'medium',
+       setPage: mockSetPage,
+       setVolumePreset: (preset: '100' | '200' | 'custom') => {
+         currentPreset = preset
+         mockSetVolumePreset(preset)
+       },
+       setSpeedLevel: mockSetSpeedLevel,
+       startInfusion: mockStartInfusion,
+       volume: 100,
+       isRunning: false,
+       isPaused: false,
+       startTime: null,
+       pauseTime: null,
+       totalPausedDuration: 0,
+       estimatedMinutes: 0,
+       calibration: null,
+       tapCount: 0,
+       firstTapTime: null,
+       lastTapTime: null,
+       measuredDropsPerMinute: 0,
+       pauseInfusion: vi.fn(),
+       resumeInfusion: vi.fn(),
+       stopInfusion: vi.fn(),
+       adjustEstimate: vi.fn(),
+       setCalibration: vi.fn(),
 
-      tapForSpeed: vi.fn(),
-      resetTapCount: vi.fn(),
-      calculateEstimatedMinutes: vi.fn(),
-    }))
+       tapForSpeed: vi.fn(),
+       resetTapCount: vi.fn(),
+       calculateEstimatedMinutes: vi.fn(),
+     }))
 
-    render(<InfusionSetupHome />)
+     render(<InfusionSetupHome />)
 
-    fireEvent.click(screen.getByText('200ml'))
+     fireEvent.click(screen.getByText('200ml'))
 
-    expect(mockSetVolumePreset).toHaveBeenCalledWith('200')
-  })
-})
+     expect(mockSetVolumePreset).toHaveBeenCalledWith('200')
+   })
+
+   it('hides preset speed options when measured drip speed is active', () => {
+     vi.mocked(useStore).mockReturnValue({
+       volumePreset: '200',
+       customVolume: 200,
+       speedLevel: 'medium',
+       setPage: mockSetPage,
+       setVolumePreset: mockSetVolumePreset,
+       setSpeedLevel: mockSetSpeedLevel,
+       startInfusion: mockStartInfusion,
+       volume: 200,
+       isRunning: false,
+       isPaused: false,
+       startTime: null,
+       pauseTime: null,
+       totalPausedDuration: 0,
+       estimatedMinutes: 0,
+       calibration: null,
+       tapCount: 0,
+       firstTapTime: null,
+       lastTapTime: null,
+       measuredDropsPerMinute: 50, // Active measured speed
+       pauseInfusion: vi.fn(),
+       resumeInfusion: vi.fn(),
+       stopInfusion: vi.fn(),
+       adjustEstimate: vi.fn(),
+       setCalibration: vi.fn(),
+       tapForSpeed: vi.fn(),
+       resetTapCount: vi.fn(),
+       calculateEstimatedMinutes: vi.fn(),
+     })
+
+     render(<InfusionSetupHome />)
+
+     // Should show the measured speed notification
+     expect(screen.getByText('实测滴速已生效')).toBeInTheDocument()
+
+     // Should NOT show preset speed options
+     expect(screen.queryByText('舒缓')).not.toBeInTheDocument()
+     expect(screen.queryByText('适中')).not.toBeInTheDocument()
+     expect(screen.queryByText('快速')).not.toBeInTheDocument()
+   })
+
+   it('shows preset speed options when measured drip speed is not active', () => {
+     vi.mocked(useStore).mockReturnValue({
+       volumePreset: '200',
+       customVolume: 200,
+       speedLevel: 'medium',
+       setPage: mockSetPage,
+       setVolumePreset: mockSetVolumePreset,
+       setSpeedLevel: mockSetSpeedLevel,
+       startInfusion: mockStartInfusion,
+       volume: 200,
+       isRunning: false,
+       isPaused: false,
+       startTime: null,
+       pauseTime: null,
+       totalPausedDuration: 0,
+       estimatedMinutes: 0,
+       calibration: null,
+       tapCount: 0,
+       firstTapTime: null,
+       lastTapTime: null,
+       measuredDropsPerMinute: 0, // No measured speed
+       pauseInfusion: vi.fn(),
+       resumeInfusion: vi.fn(),
+       stopInfusion: vi.fn(),
+       adjustEstimate: vi.fn(),
+       setCalibration: vi.fn(),
+       tapForSpeed: vi.fn(),
+       resetTapCount: vi.fn(),
+       calculateEstimatedMinutes: vi.fn(),
+     })
+
+     render(<InfusionSetupHome />)
+
+     // Should NOT show the measured speed notification
+     expect(screen.queryByText('实测滴速已生效')).not.toBeInTheDocument()
+
+     // Should show preset speed options
+     expect(screen.getByText('舒缓')).toBeInTheDocument()
+     expect(screen.getByText('适中')).toBeInTheDocument()
+     expect(screen.getByText('快速')).toBeInTheDocument()
+   })
+ })
