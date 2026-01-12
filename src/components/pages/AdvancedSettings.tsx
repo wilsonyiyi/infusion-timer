@@ -2,7 +2,7 @@ import { useStore } from '../../store/useStore'
 import { useLocation } from 'wouter-preact'
 
 export function AdvancedSettings() {
-  const { setDropFactor, setCalibration, dropFactor, calibration, measuredDropsPerMinute, tapForSpeed, resetTapCount } = useStore()
+  const { setDropFactor, dropFactor, measuredDropsPerMinute, tapForSpeed, resetTapCount } = useStore()
   const [, navigate] = useLocation()
 
   return (
@@ -24,12 +24,12 @@ export function AdvancedSettings() {
 
       <main class="max-w-md mx-auto pb-12 w-full">
         <section class="mt-6">
-          <h3 class="text-slate-500 text-xs font-semibold uppercase tracking-wider px-5 pb-2">滴系数设置（gtt/mL）</h3>
+          <h3 class="text-slate-500 text-xs font-semibold uppercase tracking-wider px-5 pb-2">滴系数设置</h3>
           <div class="bg-white border-y border-slate-200">
             <div class="flex items-center gap-4 px-5 min-h-16 justify-between">
               <div class="flex flex-col py-3">
                 <p class="text-base font-normal">每毫升滴数 (gtt/mL)</p>
-                <p class="text-xs text-slate-400">标准输液管通常为 20 gtt/mL。</p>
+                <p class="text-xs text-slate-400">标准输液管通常为 20 gtt/mL</p>
               </div>
               <div class="shrink-0">
                 <div class="flex items-center gap-3 bg-slate-100 p-1 rounded-xl">
@@ -63,8 +63,8 @@ export function AdvancedSettings() {
 
         <section class="mt-8">
           <div class="px-5 pb-2 flex justify-between items-end">
-            <h3 class="text-slate-500 text-xs font-semibold uppercase tracking-wider">精确测速（点击测速）</h3>
-            <span class="text-[10px] bg-primary/10 text-primary px-2.5 py-0.5 rounded-full font-bold">实时计算</span>
+            <h3 class="text-slate-500 text-xs font-semibold uppercase tracking-wider">实测滴速</h3>
+            <span class="text-[10px] bg-primary/10 text-primary px-2.5 py-0.5 rounded-full font-bold">优先于预设速度</span>
           </div>
           <div class="bg-white border-y border-slate-200 p-8 flex flex-col items-center gap-6">
             <div class="text-center space-y-1">
@@ -92,33 +92,19 @@ export function AdvancedSettings() {
           </div>
         </section>
 
-        <section class="mt-8">
-          <h3 class="text-slate-500 text-xs font-semibold uppercase tracking-wider px-5 pb-2">进度同步校准</h3>
-          <div class="px-5">
-            <div class="bg-white p-2.5 rounded-2xl border border-slate-200 grid grid-cols-3 gap-2.5 shadow-sm">
-              <button
-                onClick={() => setCalibration('high')}
-                class={`flex flex-col items-center justify-center py-5 px-2 rounded-xl transition-all ${calibration === 'high' ? 'bg-primary/10 border border-primary/20 shadow-sm' : 'bg-slate-50 border border-transparent active:bg-slate-100'}`}
-              >
-                <span class="text-primary mb-2 text-2xl">🔋</span>
-                <span class="text-[13px] font-semibold text-slate-700">还有很多</span>
-              </button>
-              <button
-                onClick={() => setCalibration('half')}
-                class={`flex flex-col items-center justify-center py-5 px-2 rounded-xl transition-all ${calibration === 'half' ? 'bg-primary/10 border border-primary/20 shadow-sm' : 'bg-slate-50 border border-transparent active:bg-slate-100'}`}
-              >
-                <span class="text-primary mb-2 text-2xl">🔋</span>
-                <span class="text-[13px] font-semibold text-slate-700">大约一半</span>
-              </button>
-              <button
-                onClick={() => setCalibration('low')}
-                class={`flex flex-col items-center justify-center py-5 px-2 rounded-xl transition-all ${calibration === 'low' ? 'bg-primary/10 border border-primary/20 shadow-sm' : 'bg-slate-50 border border-transparent active:bg-slate-100'}`}
-              >
-                <span class="text-primary mb-2 text-2xl">🔋</span>
-                <span class="text-[13px] font-semibold text-slate-700">快完了</span>
-              </button>
+        <section class="mt-8 px-5">
+          <div class="bg-amber-50/50 border border-amber-100 rounded-2xl p-5 flex gap-4">
+            <div class="shrink-0 text-amber-600">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+              </svg>
             </div>
-            <p class="text-[12px] text-slate-400 mt-3 px-1 italic">选择一个选项将根据常见规格即时调整预计剩余时间。</p>
+            <div>
+              <h4 class="text-sm font-bold text-slate-800 mb-1">使用说明</h4>
+              <p class="text-xs leading-relaxed text-slate-500">
+                滴系数用于计算时间，实测滴速优先于预设速度。如需微调预估时间，可在计时页面使用"感觉变慢/变快"功能。
+              </p>
+            </div>
           </div>
         </section>
 
@@ -145,7 +131,7 @@ export function AdvancedSettings() {
             onClick={() => navigate('/')}
             class="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/25 active:scale-[0.98] transition-all text-lg"
           >
-            保存并应用设置
+            返回首页
           </button>
         </div>
       </footer>

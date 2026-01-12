@@ -2,7 +2,7 @@ import { useStore } from '../../store/useStore'
 import { useLocation } from 'wouter-preact'
 
 export function InfusionSetupHome() {
-  const { setVolumePreset, setSpeedLevel, startInfusion, volumePreset, customVolume, speedLevel } = useStore()
+  const { setVolumePreset, setSpeedLevel, startInfusion, volumePreset, customVolume, speedLevel, measuredDropsPerMinute, resetTapCount } = useStore()
   const [, navigate] = useLocation()
 
   const handleVolumeChange = (preset: '100' | '200' | 'custom') => {
@@ -16,6 +16,11 @@ export function InfusionSetupHome() {
   const handleStartInfusion = () => {
     startInfusion()
     navigate('/timer')
+  }
+
+  const handleSpeedLevelChange = (level: 'slow' | 'medium' | 'fast') => {
+    setSpeedLevel(level)
+    resetTapCount()
   }
 
   return (
@@ -98,6 +103,30 @@ export function InfusionSetupHome() {
             </svg>
             <h3 class="text-base font-semibold text-slate-700 dark:text-slate-300">调节滴注速度</h3>
           </div>
+
+          {measuredDropsPerMinute > 0 && (
+            <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 space-y-3">
+              <div class="flex items-start gap-3">
+                <div class="shrink-0 mt-0.5">
+                  <svg class="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-bold text-slate-800">实测滴速已生效</p>
+                  <p class="text-xs text-slate-600 mt-1">
+                    当前使用实测速度 <span class="font-bold text-amber-700">{measuredDropsPerMinute} 滴/分</span>，覆盖了预设速度。
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={resetTapCount}
+                class="w-full text-sm font-medium text-amber-700 bg-amber-100/50 hover:bg-amber-100 py-2.5 rounded-xl transition-colors active:scale-[0.98]"
+              >
+                改用预设速度
+              </button>
+            </div>
+          )}
           <div class="grid grid-cols-3 gap-3">
             <label class="relative cursor-pointer group">
               <input
@@ -105,7 +134,7 @@ export function InfusionSetupHome() {
                 name="speed"
                 value="slow"
                 checked={speedLevel === 'slow'}
-                onChange={() => setSpeedLevel('slow')}
+                onChange={() => handleSpeedLevelChange('slow')}
                 class="peer sr-only"
               />
               <div class="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-transparent bg-white dark:bg-slate-800 p-5 shadow-lg shadow-slate-200/50 dark:shadow-black/20 transition-all peer-checked:border-primary peer-checked:bg-primary/5">
@@ -122,7 +151,7 @@ export function InfusionSetupHome() {
                 name="speed"
                 value="medium"
                 checked={speedLevel === 'medium'}
-                onChange={() => setSpeedLevel('medium')}
+                onChange={() => handleSpeedLevelChange('medium')}
                 class="peer sr-only"
               />
               <div class="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-transparent bg-white dark:bg-slate-800 p-5 shadow-lg shadow-slate-200/50 dark:shadow-black/20 transition-all peer-checked:border-primary peer-checked:bg-primary/5">
@@ -139,7 +168,7 @@ export function InfusionSetupHome() {
                 name="speed"
                 value="fast"
                 checked={speedLevel === 'fast'}
-                onChange={() => setSpeedLevel('fast')}
+                onChange={() => handleSpeedLevelChange('fast')}
                 class="peer sr-only"
               />
               <div class="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-transparent bg-white dark:bg-slate-800 p-5 shadow-lg shadow-slate-200/50 dark:shadow-black/20 transition-all peer-checked:border-primary peer-checked:bg-primary/5">
