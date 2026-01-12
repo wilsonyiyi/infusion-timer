@@ -234,19 +234,24 @@ export const useStore = create<Store>((set, get, api) => {
     tapForSpeed: () => {
       const state = get()
       const now = Date.now()
+      const MIN_TAPS = 6
+      const MIN_TIME_MINUTES = 0.05 // 3 seconds minimum for better UX
 
       if (state.firstTapTime === null) {
         set({ firstTapTime: now, tapCount: 1, lastTapTime: now })
       } else {
         const newTapCount = state.tapCount + 1
         const timeDiff = (now - state.firstTapTime) / 60000
-        if (timeDiff >= 0.1) {
+
+        if (newTapCount >= MIN_TAPS && timeDiff >= MIN_TIME_MINUTES) {
           const dropsPerMinute = newTapCount / timeDiff
           set({
             tapCount: newTapCount,
             lastTapTime: now,
             measuredDropsPerMinute: Math.round(dropsPerMinute)
           })
+        } else {
+          set({ tapCount: newTapCount, lastTapTime: now })
         }
       }
     },

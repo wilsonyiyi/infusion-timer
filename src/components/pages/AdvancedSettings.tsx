@@ -2,7 +2,7 @@ import { useStore } from '../../store/useStore'
 import { useLocation } from 'wouter-preact'
 
 export function AdvancedSettings() {
-  const { measuredDropsPerMinute, tapForSpeed, resetTapCount, applyAdvancedSettings } = useStore()
+  const { measuredDropsPerMinute, tapForSpeed, resetTapCount, applyAdvancedSettings, tapCount } = useStore()
   const [, navigate] = useLocation()
 
   return (
@@ -44,7 +44,7 @@ export function AdvancedSettings() {
             </div>
             <div class="text-center space-y-3">
               <p class="text-sm font-medium text-slate-600">测量方法</p>
-              <p class="text-xs text-slate-400 leading-relaxed">每当看到一滴药液落下时，点击下方按钮开始测量</p>
+              <p class="text-xs text-slate-400 leading-relaxed">每当看到一滴药液落下时，点击下方按钮开始测量。需要至少点击 6 次并持续至少 3 秒以获得准确结果。</p>
             </div>
             <button
               onClick={tapForSpeed}
@@ -54,6 +54,11 @@ export function AdvancedSettings() {
               <div class="size-32 rounded-full bg-primary/5 flex items-center justify-center">
                 <span class="text-primary text-6xl">💧</span>
               </div>
+              {tapCount > 0 && (
+                <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
+                  {tapCount}
+                </div>
+              )}
             </button>
             <button
               onClick={resetTapCount}
