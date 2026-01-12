@@ -3,7 +3,6 @@ export interface StoredInfusionData {
   volumePreset: '100' | '200' | 'custom'
   customVolume: number
   speedLevel: 'slow' | 'medium' | 'fast'
-  dropFactor: number
   isRunning: boolean
   isPaused: boolean
   isCompleted: boolean
@@ -34,7 +33,6 @@ function validateStoredData(data: unknown): data is StoredInfusionData {
     'volumePreset',
     'customVolume',
     'speedLevel',
-    'dropFactor',
     'isRunning',
     'isPaused',
     'isCompleted',
@@ -72,10 +70,6 @@ function validateStoredData(data: unknown): data is StoredInfusionData {
   if (
     !['slow', 'medium', 'fast'].includes(parsed.speedLevel as string)
   ) {
-    return false
-  }
-
-  if (typeof parsed.dropFactor !== 'number' || isNaN(parsed.dropFactor) || parsed.dropFactor <= 0) {
     return false
   }
 

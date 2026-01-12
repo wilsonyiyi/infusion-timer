@@ -10,7 +10,6 @@ interface InfusionState {
   volumePreset: VolumePreset
   customVolume: number
   speedLevel: SpeedLevel
-  dropFactor: number
   isRunning: boolean
   isPaused: boolean
   isCompleted: boolean
@@ -29,7 +28,6 @@ interface InfusionActions {
   setVolumePreset: (preset: VolumePreset) => void
   setCustomVolume: (volume: number) => void
   setSpeedLevel: (level: SpeedLevel) => void
-  setDropFactor: (factor: number) => void
   startInfusion: () => void
   pauseInfusion: () => void
   resumeInfusion: () => void
@@ -41,6 +39,7 @@ interface InfusionActions {
   tapForSpeed: () => void
   resetTapCount: () => void
   calculateEstimatedMinutes: () => void
+  applyAdvancedSettings: () => void
 }
 
 const SPEED_RANGES = {
@@ -58,7 +57,6 @@ const INITIAL_STATE: InfusionState = {
   volumePreset: '200',
   customVolume: 200,
   speedLevel: 'medium',
-  dropFactor: 20,
   isRunning: false,
   isPaused: false,
   isCompleted: false,
@@ -80,7 +78,6 @@ const initialState = loadedData
       volumePreset: loadedData.volumePreset,
       customVolume: loadedData.customVolume,
       speedLevel: loadedData.speedLevel,
-      dropFactor: loadedData.dropFactor,
       isRunning: loadedData.isRunning,
       isPaused: loadedData.isPaused,
       isCompleted: loadedData.isCompleted,
@@ -104,7 +101,6 @@ export const useStore = create<Store>((set, get, api) => {
       volumePreset: state.volumePreset,
       customVolume: state.customVolume,
       speedLevel: state.speedLevel,
-      dropFactor: state.dropFactor,
       isRunning: state.isRunning,
       isPaused: state.isPaused,
       isCompleted: state.isCompleted,
@@ -135,10 +131,6 @@ export const useStore = create<Store>((set, get, api) => {
 
     setSpeedLevel: (level) => {
       set({ speedLevel: level })
-    },
-
-    setDropFactor: (factor) => {
-      set({ dropFactor: factor })
     },
 
     startInfusion: () => {
@@ -264,7 +256,7 @@ export const useStore = create<Store>((set, get, api) => {
     },
 
     calculateEstimatedMinutes: () => {
-      const { volume, speedLevel, dropFactor, measuredDropsPerMinute } = get()
+      const { volume, speedLevel, measuredDropsPerMinute } = get()
 
       let dropsPerMinute
       if (measuredDropsPerMinute > 0) {
@@ -273,11 +265,17 @@ export const useStore = create<Store>((set, get, api) => {
         dropsPerMinute = SPEED_RANGES[speedLevel].avg
       }
 
-      const dropsPerMl = dropFactor
+      // Use standard drop factor of 20 gtt/mL
+      const dropsPerMl = 20
       const totalDrops = volume * dropsPerMl
       const estimatedMinutes = (totalDrops / dropsPerMinute) * SAFETY_FACTOR
 
       set({ estimatedMinutes: Math.round(estimatedMinutes) })
+    },
+
+    applyAdvancedSettings: () => {
+      const { calculateEstimatedMinutes } = get()
+      calculateEstimatedMinutes()
     }
   }
 })
